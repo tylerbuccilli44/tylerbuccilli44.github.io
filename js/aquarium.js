@@ -67,6 +67,11 @@ audio.onpause=()=>{document.getElementById('music-icon').src='assets/player-play
 audio.onloadedmetadata=()=>{seek.max=audio.duration;seek.disabled=!Number.isFinite(audio.duration);document.getElementById('duration').textContent=clock(audio.duration)};
 audio.ontimeupdate=()=>{seek.value=audio.currentTime;document.getElementById('elapsed').textContent=clock(audio.currentTime);seek.setAttribute('aria-valuetext',clock(audio.currentTime)+' of '+clock(audio.duration))};
 seek.oninput=()=>{audio.currentTime=Number(seek.value)};volume.oninput=()=>{audio.volume=Number(volume.value)};
+const order=Object.keys(tracks);function changeTrack(step){track.value=order[(order.indexOf(track.value)+step+order.length)%order.length];track.dispatchEvent(new Event('change'))}
+document.getElementById('music-previous').onclick=()=>changeTrack(-1);document.getElementById('music-next').onclick=()=>changeTrack(1);
+const mute=document.getElementById('music-mute');function updateVolume(){const silent=audio.muted||audio.volume===0;mute.setAttribute('aria-pressed',String(silent));mute.setAttribute('aria-label',silent?'Unmute music':'Mute music');mute.title=silent?'Unmute':'Mute';volume.value=audio.muted?0:audio.volume}
+mute.onclick=()=>{if(audio.volume===0){audio.volume=.6;audio.muted=false}else{audio.muted=!audio.muted}updateVolume()};volume.oninput=()=>{audio.volume=Number(volume.value);audio.muted=false;updateVolume()};
+const mini=document.getElementById('player-minimize'),controls=document.getElementById('player-controls');mini.onclick=()=>{controls.hidden=!controls.hidden;mini.textContent=controls.hidden?'□':'−';mini.setAttribute('aria-expanded',String(!controls.hidden));mini.setAttribute('aria-label',controls.hidden?'Expand music player':'Minimize music player')};
 audio.onerror=()=>{status.textContent='The audio file could not be loaded.'};
 })();
 
