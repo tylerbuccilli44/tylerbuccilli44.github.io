@@ -1,0 +1,10 @@
+import {cp,mkdir,rm} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const output=path.resolve(root,'dist');
+if(path.dirname(output)!==path.resolve(root))throw new Error('Invalid output directory');
+await rm(output,{recursive:true,force:true});
+await mkdir(output,{recursive:true});
+for(const asset of ['index.html','assets','css','js','gtg','secret'])await cp(path.join(root,asset),path.join(output,asset),{recursive:true});
+console.log('Prepared static site in dist/');

@@ -1,0 +1,11 @@
+{
+  "name": "tyler-aqua-portfolio",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/prepare-pages.mjs",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name tylerbuccilli --branch main"
+  },
+  "devDependencies": {
+    "wrangler": "4.158.0"
+  }
+}
