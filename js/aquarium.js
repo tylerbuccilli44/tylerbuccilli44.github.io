@@ -55,19 +55,18 @@ g.fillStyle='#ffffff2b';g.fillRect(0,0,500,5);
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let last=0;function animate(t){if(!box.classList.contains('collapsed')&&!document.hidden&&t-last>30){if(!reducedMotion.matches||last===0){draw();last=t}}requestAnimationFrame(animate)}requestAnimationFrame(animate);
 
-const audio=document.getElementById('aquarium-audio'),play=document.getElementById('music-toggle'),stop=document.getElementById('music-stop'),seek=document.getElementById('music-seek'),volume=document.getElementById('music-volume'),status=document.getElementById('music-status');
+const audio=document.getElementById('aquarium-audio'),play=document.getElementById('music-toggle'),seek=document.getElementById('music-seek'),volume=document.getElementById('music-volume'),status=document.getElementById('music-status');
 const clock=t=>Number.isFinite(t)?Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0'):'0:00';
 audio.volume=.6;
 const tracks={'lease':{src:'assets/lease.mp3',title:'LEASE'},'wii-u-menu':{src:'assets/wii-u-menu.mp3',title:'Wii U Menu'},'mii-maker':{src:'assets/mii-maker.mp3',title:'Mii Editor — Mii Maker (Wii U)'}};
 const track=document.getElementById('music-track');let trackRequest=0;
 track.onchange=async()=>{const request=++trackRequest;const resume=!audio.paused;audio.pause();audio.src=tracks[track.value].src;seek.value=0;seek.disabled=true;seek.removeAttribute('aria-valuetext');document.getElementById('elapsed').textContent='0:00';document.getElementById('duration').textContent='0:00';audio.load();status.textContent=resume?'Loading…':'Press play to start.';if(resume){try{await audio.play()}catch{if(request===trackRequest)status.textContent='Press play to start.'}}};
 play.onclick=async()=>{if(!audio.paused){audio.pause();return}try{await audio.play()}catch{status.textContent='Playback could not start. Try again.'}};
-audio.onplay=()=>{play.textContent='Ⅱ';play.setAttribute('aria-label','Pause music');status.textContent='Playing · '+tracks[track.value].title};
-audio.onpause=()=>{play.textContent='▶';play.setAttribute('aria-label','Play music');status.textContent='Paused'};
+audio.onplay=()=>{document.getElementById('music-icon').src='assets/player-pause.png';play.setAttribute('aria-label','Pause music');status.textContent='Playing · '+tracks[track.value].title};
+audio.onpause=()=>{document.getElementById('music-icon').src='assets/player-play.svg';play.setAttribute('aria-label','Play music');status.textContent='Paused'};
 audio.onloadedmetadata=()=>{seek.max=audio.duration;seek.disabled=!Number.isFinite(audio.duration);document.getElementById('duration').textContent=clock(audio.duration)};
 audio.ontimeupdate=()=>{seek.value=audio.currentTime;document.getElementById('elapsed').textContent=clock(audio.currentTime);seek.setAttribute('aria-valuetext',clock(audio.currentTime)+' of '+clock(audio.duration))};
 seek.oninput=()=>{audio.currentTime=Number(seek.value)};volume.oninput=()=>{audio.volume=Number(volume.value)};
-stop.onclick=()=>{audio.pause();if(audio.readyState>0)audio.currentTime=0;status.textContent='Stopped'};
 audio.onerror=()=>{status.textContent='The audio file could not be loaded.'};
 })();
 
