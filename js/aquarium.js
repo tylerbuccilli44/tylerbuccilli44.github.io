@@ -62,8 +62,8 @@ const tracks={'lease':{src:'assets/lease.mp3',title:'LEASE'},'wii-u-menu':{src:'
 const track=document.getElementById('music-track');let trackRequest=0;
 track.onchange=async()=>{const request=++trackRequest;const resume=!audio.paused;audio.pause();audio.src=tracks[track.value].src;seek.value=0;seek.disabled=true;seek.removeAttribute('aria-valuetext');document.getElementById('elapsed').textContent='0:00';document.getElementById('duration').textContent='0:00';audio.load();status.textContent=resume?'Loading…':'Press play to start.';if(resume){try{await audio.play()}catch{if(request===trackRequest)status.textContent='Press play to start.'}}};
 play.onclick=async()=>{if(!audio.paused){audio.pause();return}try{await audio.play()}catch{status.textContent='Playback could not start. Try again.'}};
-audio.onplay=()=>{document.getElementById('music-icon').src='assets/player-pause.png';play.setAttribute('aria-label','Pause music');status.textContent='Playing · '+tracks[track.value].title};
-audio.onpause=()=>{document.getElementById('music-icon').src='assets/player-play.svg';play.setAttribute('aria-label','Play music');status.textContent='Paused'};
+audio.onplay=()=>{document.getElementById('music-icon').src='assets/player-pause.png';play.classList.add('is-playing');play.setAttribute('aria-label','Pause music');status.textContent='Playing · '+tracks[track.value].title};
+audio.onpause=()=>{document.getElementById('music-icon').src='assets/player-play.svg';play.classList.remove('is-playing');play.setAttribute('aria-label','Play music');status.textContent='Paused'};
 audio.onloadedmetadata=()=>{seek.max=audio.duration;seek.disabled=!Number.isFinite(audio.duration);document.getElementById('duration').textContent=clock(audio.duration)};
 audio.ontimeupdate=()=>{seek.value=audio.currentTime;document.getElementById('elapsed').textContent=clock(audio.currentTime);seek.setAttribute('aria-valuetext',clock(audio.currentTime)+' of '+clock(audio.duration))};
 seek.oninput=()=>{audio.currentTime=Number(seek.value)};volume.oninput=()=>{audio.volume=Number(volume.value)};
@@ -71,7 +71,15 @@ const order=Object.keys(tracks);function changeTrack(step){track.value=order[(or
 document.getElementById('music-previous').onclick=()=>changeTrack(-1);document.getElementById('music-next').onclick=()=>changeTrack(1);
 const mute=document.getElementById('music-mute');function updateVolume(){const silent=audio.muted||audio.volume===0;mute.setAttribute('aria-pressed',String(silent));mute.setAttribute('aria-label',silent?'Unmute music':'Mute music');mute.title=silent?'Unmute':'Mute';volume.value=audio.muted?0:audio.volume}
 mute.onclick=()=>{if(audio.volume===0){audio.volume=.6;audio.muted=false}else{audio.muted=!audio.muted}updateVolume()};volume.oninput=()=>{audio.volume=Number(volume.value);audio.muted=false;updateVolume()};
-const mini=document.getElementById('player-minimize'),controls=document.getElementById('player-controls');mini.onclick=()=>{controls.hidden=!controls.hidden;mini.textContent=controls.hidden?'□':'−';mini.setAttribute('aria-expanded',String(!controls.hidden));mini.setAttribute('aria-label',controls.hidden?'Expand music player':'Minimize music player')};
+
+const playerWindow=document.querySelector('.image-player'),mini=document.getElementById('player-minimize'),controls=document.getElementById('player-controls');
+function compact(){const off=playerWindow.classList.toggle('is-compact');controls.hidden=off;mini.setAttribute('aria-expanded',String(!off));mini.setAttribute('aria-label',off?'Expand music player':'Minimize music player')}
+mini.onclick=compact;document.getElementById('player-compact').onclick=compact;
+function enlarge(){const on=playerWindow.classList.toggle('is-large');document.getElementById('player-maximize').setAttribute('aria-pressed',String(on))}
+document.getElementById('player-maximize').onclick=enlarge;document.getElementById('player-popout').onclick=enlarge;
+const reopen=document.getElementById('player-reopen');document.getElementById('player-close').onclick=()=>{audio.pause();playerWindow.hidden=true;reopen.hidden=false};reopen.onclick=()=>{playerWindow.hidden=false;reopen.hidden=true};
+for(const [buttonId,popupId] of [['track-menu','track-popup'],['volume-menu','volume-popup']]){const button=document.getElementById(buttonId),popup=document.getElementById(popupId);button.onclick=()=>{popup.hidden=!popup.hidden;button.setAttribute('aria-expanded',String(!popup.hidden))}}
+document.getElementById('music-stop').onclick=()=>{audio.pause();if(audio.readyState>0)audio.currentTime=0};
 audio.onerror=()=>{status.textContent='The audio file could not be loaded.'};
 })();
 
