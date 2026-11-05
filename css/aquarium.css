@@ -1,0 +1,12 @@
+#desktop-pet{position:fixed;bottom:14px;right:14px;width:260px;z-index:1500;border:1px solid #efffff;border-radius:8px;padding:5px;background:linear-gradient(135deg,#e9fcffd9,#7fb6d6d9);box-shadow:inset 0 0 0 1px #477c9c,0 5px 25px #002b5680;backdrop-filter:blur(12px);font:12px "Segoe UI",Tahoma,sans-serif;color:#173b50}
+.tank-title{display:flex;align-items:center;justify-content:space-between;height:27px;padding:0 4px;text-shadow:0 1px #fff}
+#desktop-pet button{font:12px "Segoe UI",Tahoma,sans-serif;border:1px solid #6a899c;border-radius:3px;color:#183b51;background:linear-gradient(#fff,#e8f1f7 46%,#c9dbe7 49%,#e7f2f8);box-shadow:inset 0 0 0 1px #ffffffaa;cursor:pointer;padding:4px 7px}
+#desktop-pet button:hover{background:linear-gradient(#fff,#a9dcf7 48%,#7fbee4 50%,#d5f3ff);border-color:#297fae}
+#tank-toggle{padding:0 7px!important;line-height:18px}
+#fish-tank{display:block;width:100%;height:145px;border:1px solid #3d7898;border-radius:3px;background:#087ea7;cursor:crosshair;touch-action:manipulation}
+.tank-hint{font-size:10px;padding:4px 2px;color:#315d71}
+.tank-actions{display:flex;gap:5px;margin-bottom:5px}.tank-actions button{flex:1}
+#music-frame{width:100%;height:80px;display:block;border:1px solid #6894ae;border-radius:3px;background:#00394f}
+#music-status{font-size:10px;line-height:1.4;margin:4px 2px;color:#315d71}
+#desktop-pet.collapsed #tank-content{display:none}
+@media(max-width:700px){#desktop-pet{width:210px;bottom:8px;right:8px}#fish-tank{height:115px}#desktop-pet:not(.collapsed){max-height:55vh;overflow:auto}}
