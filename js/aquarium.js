@@ -1,7 +1,7 @@
 
 (()=>{
 const box=document.getElementById('desktop-pet'),toggle=document.getElementById('tank-toggle');
-if(matchMedia('(max-width:700px)').matches){box.classList.add('collapsed');toggle.textContent='+';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Expand aquarium')}
+
 toggle.onclick=()=>{const off=box.classList.toggle('collapsed');toggle.textContent=off?'+':'−';toggle.setAttribute('aria-expanded',String(!off));toggle.setAttribute('aria-label',off?'Expand aquarium':'Minimize aquarium')};
 const canvas=document.getElementById('fish-tank'),g=canvas.getContext('2d');
 const fish=Array.from({length:8},(_,i)=>({species:i%4,x:40+Math.random()*420,y:45+Math.random()*150,v:(i%2?1:-1)*(.6+Math.random()*.6),size:12+Math.random()*8,color:['#ff7624','#ffe237','#1475ed','#215fc9'][i%4]}));
@@ -54,8 +54,17 @@ g.fillStyle='#ffffff2b';g.fillRect(0,0,500,5);
 }
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let last=0;function animate(t){if(!box.classList.contains('collapsed')&&!document.hidden&&t-last>30){if(!reducedMotion.matches||last===0){draw();last=t}}requestAnimationFrame(animate)}requestAnimationFrame(animate);
-let player=null;const music=document.getElementById('music-toggle'),status=document.getElementById('music-status');
-window.onYouTubeIframeAPIReady=()=>{player=new YT.Player('music-frame',{events:{onReady:e=>e.target.playVideo(),onStateChange:e=>{if(e.data===YT.PlayerState.PLAYING){music.textContent='Ⅱ Pause music';status.textContent='Playing · music loops continuously.'}else if(e.data===YT.PlayerState.PAUSED){music.textContent='▶ Play music';status.textContent='Music paused.'}else if(e.data===YT.PlayerState.ENDED){e.target.seekTo(4);e.target.playVideo()}},onAutoplayBlocked:()=>{status.textContent='Press Play music to start the soundtrack.'},onError:()=>{status.textContent='YouTube could not play this video here. Try the link below.';if(!document.getElementById('music-external')){const a=document.createElement('a');a.id='music-external';a.href='https://www.youtube.com/watch?v=xsdWibwQdZE&t=4s';a.target='_blank';a.rel='noopener';a.textContent='Open song on YouTube';status.append(' ',a)}}}})};
-music.onclick=()=>{if(player&&typeof player.getPlayerState==='function'){player.getPlayerState()===YT.PlayerState.PLAYING?player.pauseVideo():player.playVideo()}else{document.getElementById('music-frame').contentWindow.postMessage(JSON.stringify({event:'command',func:'playVideo',args:[]}), 'https://www.youtube.com');status.textContent='Use the video player below if music does not start.'}};
-const api=document.createElement('script');api.src='https://www.youtube.com/iframe_api';document.body.appendChild(api);
+
+const audio=document.getElementById('aquarium-audio'),play=document.getElementById('music-toggle'),stop=document.getElementById('music-stop'),seek=document.getElementById('music-seek'),volume=document.getElementById('music-volume'),status=document.getElementById('music-status');
+const clock=t=>Number.isFinite(t)?Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0'):'0:00';
+audio.volume=.6;
+play.onclick=async()=>{if(!audio.paused){audio.pause();return}try{await audio.play()}catch{status.textContent='Playback could not start. Try again.'}};
+audio.onplay=()=>{play.textContent='Ⅱ';play.setAttribute('aria-label','Pause music');status.textContent='Playing · LEASE'};
+audio.onpause=()=>{play.textContent='▶';play.setAttribute('aria-label','Play music');status.textContent='Paused'};
+audio.onloadedmetadata=()=>{seek.max=audio.duration;seek.disabled=!Number.isFinite(audio.duration);document.getElementById('duration').textContent=clock(audio.duration)};
+audio.ontimeupdate=()=>{seek.value=audio.currentTime;document.getElementById('elapsed').textContent=clock(audio.currentTime);seek.setAttribute('aria-valuetext',clock(audio.currentTime)+' of '+clock(audio.duration))};
+seek.oninput=()=>{audio.currentTime=Number(seek.value)};volume.oninput=()=>{audio.volume=Number(volume.value)};
+stop.onclick=()=>{audio.pause();audio.currentTime=0;status.textContent='Stopped'};
+audio.onerror=()=>{status.textContent='The audio file could not be loaded.'};
 })();
+
