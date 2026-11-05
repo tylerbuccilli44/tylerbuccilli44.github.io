@@ -30,17 +30,15 @@ No CNAME file is enabled yet, so the GitHub Pages address works before your doma
 
 ## Hidden page
 
-Type `gtg` on the portfolio, with no modifier keys, to open the restroom finder. Keys must be typed within 1.8 seconds of one another. Typing in form controls never triggers it. Direct route: `/#/gtg` (or `/repository/#/gtg` for a project site). Escape or the back button returns to the portfolio. There is no public navigation link to it.
-
-This is a discoverable easter egg, **not private access control**. Source code and the static finder file remain public. The finder is marked `noindex,nofollow`.
+Visit https://tylerbuccilli44.github.io/gtg to open the restroom finder. There is no public navigation link or keyboard shortcut. Previous `/#/gtg` and `/secret/gtg.html` links redirect to `/gtg/`. The three themes and map remain available. This page is public and marked noindex,nofollow.
 
 ## Files and components
 
 - `index.html`: semantic portfolio layout
 - `css/main.css`: responsive glass desktop theme
 - `css/aquarium.css`, `js/aquarium.js`: original interactive CGI-style tropical aquarium and YouTube soundtrack
-- `js/app.js`: hash routing, keyboard sequence, project dialogs, daylight toggle, bubbles
-- `secret/gtg.html`: preserved restroom finder, original images and map data
+- `js/app.js`: legacy link redirect and footer year
+- `gtg/index.html`: restroom finder; `secret/`: styles, theme picker, map data and legacy redirect
 - `assets/`: images extracted from the supplied HTML, plus the orb favicon
 
 The aquarium has clownfish, yellow tangs, blue tangs and emperor angelfish. Click the water, use Enter/Space on the canvas, or press Feed fish. Minimize it to tuck it away. Music availability and autoplay depend on YouTube and browser settings; press Play if required. Map tiles and the embedded song need internet access. Images came from the supplied reference; check their usage rights before public release.
